@@ -59,9 +59,6 @@ export const createNote = async (note: {
     tag: NoteTag;
 }): Promise<Note> => {
  const config = {
-        params: {
-          note, 
-    },
         headers: {
             Authorization: `Bearer ${myKey}`
         },
@@ -71,6 +68,7 @@ export const createNote = async (note: {
 
     const response = await axios.post<Note>(
         'https://notehub-public.goit.study/api/notes',
+        note,
          config
     );
 
@@ -80,9 +78,6 @@ export const createNote = async (note: {
 
 export const deleteNote = async (id: number): Promise<Note> => {
  const config = {
-        params: {
-          id, 
-    },
         headers: {
             Authorization: `Bearer ${myKey}`
         },
@@ -91,7 +86,7 @@ export const deleteNote = async (id: number): Promise<Note> => {
 
 
     const response = await axios.delete<Note>(
-        'https://notehub-public.goit.study/api/notes',
+        `https://notehub-public.goit.study/api/notes/${id}`,
          config
     );
 

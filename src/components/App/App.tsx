@@ -10,8 +10,10 @@ import { useDebouncedCallback } from 'use-debounce';
 import SearchBox from "../SearchBox/SearchBox";
 import Pagination from "../Pagination/Pagination"
 import NoteList from "../NoteList/NoteList";
-/*import NoteForm from "../NoteForm/NoteForm";*/
+import NoteForm from "../NoteForm/NoteForm";
 import Modal from "../Modal/Modal";
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 
 
@@ -23,7 +25,7 @@ export default function App() {
 	const [modalIsOpen, setModalIsOpen] = useState(false)
 
   const { data, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ['notes', search, page],
+    queryKey: ['notes', debSearch, page],
 	  queryFn: () => fetchNotes({ search: debSearch, page, perPage: 12 }),
     placeholderData: keepPreviousData,
   });
@@ -35,7 +37,7 @@ const handleSearch = (search: string) => {
 	handleDebouncedSearch(search);
       
 	};
-const handleDebouncedSearch = useDebouncedCallback((search: string) => { setDebouncedSearch(search) }, 500)
+const handleDebouncedSearch = useDebouncedCallback((search: string) => { setDebouncedSearch(search) }, 400)
 
 
 
@@ -55,20 +57,21 @@ const handleDebouncedSearch = useDebouncedCallback((search: string) => { setDebo
 		
 
 		
-         {isLoading &&  <p>Loading...</p>}
-       {isError &&  <p>Error</p>}
+         {isLoading &&  <Loader/>}
+       {isError &&  <ErrorMessage/>}
 
-		 {isSuccess && data?.notes?.length > 0 ? (
+		 {isSuccess && data?.notes?.length > 0 && (
         <NoteList notes={data.notes} />)
-        : (
-          <p>No notes found</p>
-        )
-		}
+      }
+      
+      {isSuccess && data?.notes?.length === 0 && (
+  <p>No notes found</p>
+)}
 		
 
 		{modalIsOpen && (
         <Modal onClose={() => setModalIsOpen(false)}>
-          <p>Noteform</p>
+          <NoteForm onClose={()=> {setModalIsOpen(false)} } />
         </Modal>
       )}
         
